@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 let userSchema = new Schema({
+    manager: {
+        type: Boolean,
+        required: "Le team lead doit être renseigné",
+    },
     email: {
         type: String,
         required: "L'email est requis",
