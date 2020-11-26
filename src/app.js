@@ -18,8 +18,8 @@ postRoute(server);
 const commentRoute = require('./api/routes/commentRoute');
 commentRoute(server);
 
-const userRoute = require('./api/routes/userRoute');
-userRoute(server);
+const adminRoute = require('./api/routes/adminRoute');
+adminRoute(server);
 
 const schoolRoute = require('./api/routes/schoolRoute');
 schoolRoute(server);
