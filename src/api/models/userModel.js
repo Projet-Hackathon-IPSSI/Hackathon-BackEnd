@@ -6,6 +6,19 @@ let userSchema = new Schema({
         type: Boolean,
         required: "Le team lead doit être renseigné",
     },
+    firstName: {
+        type: String,
+        required: "Le prénom est requis",
+    },
+    lastName: {
+        type: String,
+        required: "Le nom est requis",
+    },
+    phoneNumber: {
+        type: String,
+        required: "Le numéro de téléphone est requis",
+        unique: true
+    },
     email: {
         type: String,
         required: "L'email est requis",
