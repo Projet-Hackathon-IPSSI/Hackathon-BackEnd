@@ -1,30 +1,39 @@
-const User = require('../models/userModel');
-
+const Admin = require('../models/adminModel');
 const jwt = require('jsonwebtoken');
 
-exports.create_an_user = (req, res) => {
-    let new_user = new User(req.body);
+const regex = /^[\w\-]+(\.[\w\-]+)*@[\w\-]+(\.[\w\-]+)*\.[a-zA-Z]{2,4}$/;
 
-    new_user.save((error, user) => {
-        if (error) {
-            res.status(500);
-            console.log(error);
-            res.json({
-                message: "Erreur serveur."
-            })
-        } else {
-            res.status(201);
-            res.json({
-                message: `Utilisateur crée : ${user.email}`
-            })
-        }
-    })
+exports.create_an_admin = (req, res) => {
+    let new_admin = new Admin(req.body);
+    if(req.body.email.match(regex)){
+        new_admin.save((error, admin) => {
+            if (error) {
+                res.status(500);
+                console.log(error);
+                res.json({
+                    message: "Erreur serveur."
+                })
+            }   
+            else {
+                res.status(201);
+                res.json({
+                    message: `Utilisateur crée : ${admin.email}`
+                })
+            }
+        })
+    }
+    else{
+        res.status(422);
+        res.json({
+            message: "Invalide email error."
+        })
+    }
 }
 
-exports.login_an_user = (req, res) => {
-    User.findOne({
+exports.login_an_admin = (req, res) => {
+    Admin.findOne({
         email: req.body.email
-    }, (error, user) => {
+    }, (error, admin) => {
         if (error) {
             res.status(500);
             console.log(error);
@@ -32,10 +41,9 @@ exports.login_an_user = (req, res) => {
                 message: "Erreur serveur."
             })
         } else {
-            if (user.password === req.body.password) {
+            if (admin.password === req.body.password) {
                 jwt.sign({
-                    email: user.email,
-                    role: "user"
+                    email: admin.email,
                 }, process.env.JWT_SECRET, {
                     expiresIn: '30 days'
                 }, (error, token) => {
@@ -58,8 +66,6 @@ exports.login_an_user = (req, res) => {
                     message: "Mot de passe ou email erroné."
                 })
             }
-
-
         }
     })
 }
