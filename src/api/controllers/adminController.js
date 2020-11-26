@@ -20,7 +20,7 @@ exports.create_an_admin = (req, res) => {
                     message: `Utilisateur crée : ${admin.email}`
                 })
             }
-        })
+        }) 
     }
     else{
         res.status(422);
@@ -40,6 +40,12 @@ exports.login_an_admin = (req, res) => {
             res.json({
                 message: "Erreur serveur."
             })
+        } else if (!admin){
+            res.status(400);
+                console.log(error);
+                res.json({
+                    message: "Mot de passe ou email erroné."
+                })
         } else {
             if (admin.password === req.body.password) {
                 jwt.sign({
