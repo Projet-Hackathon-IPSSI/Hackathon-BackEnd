@@ -63,9 +63,15 @@ exports.get_a_school = (req, res) => {
             res.json({
                 message: "Erreur serveur."
             })
-        } else {
+        } else if(school){
             res.status(200);
             res.json(school)
+        } else {
+            res.status(404);
+            console.log(error);
+            res.json({
+                message: "Ecole inexistante."
+            })
         }
     })
 }
@@ -82,9 +88,15 @@ exports.update_a_school = (req, res) => {
                     res.json({
                         message: "Erreur serveur."
                     })
-                } else {
+                } else if (school) {
                     res.status(200);
                     res.json(school)
+                }else {
+                    res.status(404);
+                    console.log(error);
+                    res.json({
+                        message: "Ecole inexistante."
+                    })
                 }
             })
         }else {
@@ -105,10 +117,16 @@ exports.delete_a_school = (req, res) => {
             res.json({
                 message: "Erreur serveur."
             })
-        } else {
+        } else if (school){
             res.status(200);
             res.json({
                 message: "Ecole supprimée !"
+            })
+        }else{
+            res.status(404);
+            console.log(error);
+            res.json({
+                message: "Ecole inexistante."
             })
         }
     })
