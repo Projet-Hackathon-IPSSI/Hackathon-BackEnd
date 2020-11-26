@@ -1,26 +1,35 @@
 const School = require('../models/schoolModel');
 
-exports.list_all_schools = (req, res) => {
-    School.find({}, (error, schools) => {
-        if (error) {
-            res.status(500);
-            console.log(error);
-            res.json({
-                message: "Erreur serveur."
-            })
-        } else {
-            res.status(200);
-            res.json(schools)
-        }
-    })
+
+function fc_list_all_schools (req, res) {
+    return School.find({})
+    .then((schools) => {return schools})
+    .catch((error) => res.status(500))
+    
+}
+
+
+exports.list_all_schools = async (req, res) => {
+    schools = await fc_list_all_schools(req)
+    if (schools == 'error') {
+        res.status(500);
+        console.log(error);
+        res.json({
+            message: "Erreur serveur."
+        })
+    } else {
+        res.status(200);
+        res.json(schools)
+    }
+    
 }
 
 
 
 exports.create_a_school =  (req, res) => {
     let new_school = new School(req.body);
-    School.find({name: req.body.name ,location : req.body.location}, (error, school) => {
-        if (error){
+    School.find({name: new_school.name ,location : new_school.location}, (error, school) => {
+        if (school.length < 1){
             new_school.save((error, school) => {
                 if (error) {
                     res.status(500);
