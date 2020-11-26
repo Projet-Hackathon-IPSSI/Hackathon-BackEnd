@@ -21,4 +21,7 @@ commentRoute(server);
 const adminRoute = require('./api/routes/adminRoute');
 adminRoute(server);
 
+const schoolRoute = require('./api/routes/schoolRoute');
+schoolRoute(server);
+
 server.listen(port, hostname);
