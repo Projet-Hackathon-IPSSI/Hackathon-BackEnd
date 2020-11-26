@@ -44,7 +44,14 @@ exports.login_an_user = (req, res) => {
             res.json({
                 message: "Erreur serveur."
             })
-        } else {
+        }else if (!user){
+            res.status(400);
+                console.log(error);
+                res.json({
+                    message: "Mot de passe ou email erroné."
+                })
+        } 
+        else {
             if (user.password === req.body.password) {
                 jwt.sign({
                     email: user.email,
