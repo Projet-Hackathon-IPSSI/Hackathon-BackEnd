@@ -47,7 +47,8 @@ let formSchema = new Schema({
         required: "L'info à propos de l'équipe est requise"
     },
     school:{
-        type: String
+        type: String,
+        required: "L'école est requise"
     },
     created_at: {
         type: Date,
