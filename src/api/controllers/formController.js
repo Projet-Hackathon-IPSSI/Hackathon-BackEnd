@@ -145,26 +145,30 @@ exports.update_a_form = async (req, res) => {
         (!req.body.member4 || req.body.member4 !== req.body.member5  ))))
     
 
-    const membre = (!req.body.member1 || await isAUser(req.body.member1)) &&  (!req.body.member2 || await isAUser(req.body.member2)) && 
-        (!req.body.member3 || await isAUser(req.body.member3)) && (!req.body.member4 || await isAUser(req.body.member4)) &&
-        (!req.body.member5 || await isAUser(req.body.member5))
+    const membre = (req.body.member1 !== '' && !req.body.member1 || await isAUser(req.body.member1)) &&  (req.body.member2 !== '' && !req.body.member2 || await isAUser(req.body.member2)) && 
+        (req.body.member3 !== '' && !req.body.member3 || await isAUser(req.body.member3)) && (req.body.member4 !== '' && !req.body.member4 || await isAUser(req.body.member4)) &&
+        (req.body.member5 !== '' && !req.body.member5 || await isAUser(req.body.member5))
     
     const registered = (req.body.member1 && await isRegistered1(req.body.member1)) ||  (req.body.member2 && await isRegistered1(req.body.member2)) || 
         (req.body.member3 && await isRegistered1(req.body.member3)) || (req.body.member4 && await isRegistered1(req.body.member4)) ||
         (req.body.member5 && await isRegistered1(req.body.member5)) || (req.body.member1 && await isRegistered2(req.body.member1)) ||  (req.body.member2 && 
         await isRegistered2(req.body.member2)) || (req.body.member3 && await isRegistered2(req.body.member3)) || (req.body.member4 && 
         await isRegistered2(req.body.member4)) ||(req.body.member5 && await isRegistered2(req.body.member5))
+
+        
+   
     
-    
-    const manager =  await isManager(req.body.member1, res);
+    const manager =  await isManager(req.body.member1, res) 
 
     const emptyAnswers = (req.body.question1 === '') || (req.body.question2 === '') || 
     ( req.body.question3 === '') || (req.body.question4 === '') || ( req.body.question5 === '')
 
-    console.log(req.body.question1);
-    console.log(emptyAnswers)
-
-    if (!memberDiff) {
+    if(req.body.school === ''){
+        res.status(400);
+        res.json({
+            message: "L'école n'est pas renseignée."
+        })
+    }else if (!memberDiff) {
         res.status(400);
         res.json({
             message: "Un membre ne peut pas être inscrit deux fois."
@@ -174,18 +178,14 @@ exports.update_a_form = async (req, res) => {
         res.status(404);
         res.json({
             message: "Un des membres n'est pas inscrit."
-        })
-    }else if(registered){
-        res.status(400);
-        res.json({
-            message: "Un des membres est déjà inscrit à un autre projet."
-        })
-    } else if (!manager){
+        }) 
+        
+    }else if(manager){
         res.status(400);
         res.json({
             message: "Le membre 1 n'a pas le statut de manager."
         })
-    }else if(emptyAnswers){
+    } else if(emptyAnswers){
         res.status(400);
         res.json({
             message: "Une question n'est pas répondue."
