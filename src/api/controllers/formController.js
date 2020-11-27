@@ -129,7 +129,7 @@ exports.get_a_form = (req, res) => {
             res.status(200);
             res.json(form);
         } else {
-            res.status(400);
+            res.status(404);
             console.log(error);
             res.json({
                 message: "Formulaire inexistant."
@@ -140,7 +140,7 @@ exports.get_a_form = (req, res) => {
 
 exports.update_a_form = async (req, res) => {
     const memberDiff = (!req.body.member1 || req.body.member1 !== req.body.member2 && req.body.member1 !== req.body.member3 && req.body.member1 !== req.body.member4 && 
-    req.body.member1 !== req.body.member5 && (!req.body.member2 || req.body.member2 !== req.body.member3 && req.body.member2 !== req.body.member4   && 
+        req.body.member1 !== req.body.member5 && (!req.body.member2 || req.body.member2 !== req.body.member3 && req.body.member2 !== req.body.member4   && 
         req.body.member2 !== req.body.member5 && (!req.body.member3 || req.body.member3 !== req.body.member4 && req.body.member3 !== req.body.member5 && 
         (!req.body.member4 || req.body.member4 !== req.body.member5  ))))
     
@@ -156,10 +156,13 @@ exports.update_a_form = async (req, res) => {
         await isRegistered2(req.body.member4)) ||(req.body.member5 && await isRegistered2(req.body.member5))
     
     
-    const manager = !req.body.member1 || await isManager(req.body.member1, res);
+    const manager =  await isManager(req.body.member1, res);
 
-    const emptyAnswers = !req.body.question1 || req.body.question1 !== '' || !req.body.question2 || req.body.question2 !== '' || 
-    !req.body.question3 || req.body.question3 !== '' || !req.body.question4 || req.body.question4 !== '' || !req.body.question5 || req.body.question5 !== ''
+    const emptyAnswers = (req.body.question1 === '') || (req.body.question2 === '') || 
+    ( req.body.question3 === '') || (req.body.question4 === '') || ( req.body.question5 === '')
+
+    console.log(req.body.question1);
+    console.log(emptyAnswers)
 
     if (!memberDiff) {
         res.status(400);
