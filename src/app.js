@@ -12,11 +12,8 @@ const bodyParser = require('body-parser');
 server.use(bodyParser.urlencoded());
 server.use(bodyParser.json());
 
-const postRoute = require('./api/routes/postRoute');
-postRoute(server);
-
-const commentRoute = require('./api/routes/commentRoute');
-commentRoute(server);
+const formRoute = require('./api/routes/formRoute');
+formRoute(server);
 
 const userRoute = require('./api/routes/userRoute');
 userRoute(server);
