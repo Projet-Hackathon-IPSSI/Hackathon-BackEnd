@@ -145,9 +145,9 @@ exports.update_a_form = async (req, res) => {
         (!req.body.member4 || req.body.member4 !== req.body.member5  ))))
     
 
-    const membre = (req.body.member1 !== '' && !req.body.member1 || await isAUser(req.body.member1)) &&  (req.body.member2 !== '' && !req.body.member2 || await isAUser(req.body.member2)) && 
-        (req.body.member3 !== '' && !req.body.member3 || await isAUser(req.body.member3)) && (req.body.member4 !== '' && !req.body.member4 || await isAUser(req.body.member4)) &&
-        (req.body.member5 !== '' && !req.body.member5 || await isAUser(req.body.member5))
+    const membre = (req.body.member1 !== '' && !req.body.member1 || await isAUser(req.body.member1)) &&  (!req.body.member2 || await isAUser(req.body.member2)) && 
+        (!req.body.member3 || await isAUser(req.body.member3)) && (!req.body.member4 || await isAUser(req.body.member4)) &&
+        (!req.body.member5 || await isAUser(req.body.member5))
     
     const registered = (req.body.member1 && await isRegistered1(req.body.member1)) ||  (req.body.member2 && await isRegistered1(req.body.member2)) || 
         (req.body.member3 && await isRegistered1(req.body.member3)) || (req.body.member4 && await isRegistered1(req.body.member4)) ||
@@ -158,15 +158,27 @@ exports.update_a_form = async (req, res) => {
         
    
     
-    const manager =  await isManager(req.body.member1, res) 
+    const manager = !req.body.member1 || await isManager(req.body.member1, res) 
 
     const emptyAnswers = (req.body.question1 === '') || (req.body.question2 === '') || 
     ( req.body.question3 === '') || (req.body.question4 === '') || ( req.body.question5 === '')
+
+    
 
     if(req.body.school === ''){
         res.status(400);
         res.json({
             message: "L'école n'est pas renseignée."
+        })
+    }else if(req.body.aboutTeam === ''){
+        res.status(400);
+        res.json({
+            message: "L'information à propos de l'équipe manque."
+        })
+    }else if(registered){
+        res.status(409);
+        res.json({
+            message: "Un des membres est déjà inscrit à un autre projet."
         })
     }else if (!memberDiff) {
         res.status(400);
@@ -202,6 +214,22 @@ exports.update_a_form = async (req, res) => {
                     message: "Erreur serveur."
                 })
             } else if (form){
+                if(req.body.member2 === ''){
+                    form["member2"] = undefined;
+                    delete req.body.member2;
+                }
+                if(req.body.member3 === ''){
+                    form["member3"] = undefined;
+                    delete req.body.member3;
+                }
+                if(req.body.member2 === ''){
+                    form["member3"] = undefined;
+                    delete req.body.member3;
+                }
+                if(req.body.member2 === ''){
+                    form["member3"] = undefined;
+                    delete req.body.member3;
+                }
                 res.status(200);
                 res.json(form);
             } else {
@@ -214,6 +242,8 @@ exports.update_a_form = async (req, res) => {
         })
     }
 }
+
+
 
 exports.delete_a_form = (req, res) => {
     Form.findByIdAndRemove(req.params.form_id, (error, form) => {
