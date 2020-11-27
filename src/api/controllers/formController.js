@@ -49,62 +49,69 @@ function isManager(email,res){
 exports.create_a_form = async (req, res) => {
 //TODO verifié que les personnes sont inscrites qu'une fois
     let new_form = new Form(req.body);
+    if(req.body.member1){
+        const memberDiff = req.body.member1 !== req.body.member2 && req.body.member1 !== req.body.member3 && req.body.member1 !== req.body.member4 && 
+        req.body.member1 !== req.body.member5 && (!req.body.member2 || req.body.member2 !== req.body.member3 && req.body.member2 !== req.body.member4   && 
+            req.body.member2 !== req.body.member5 && (!req.body.member3 || req.body.member3 !== req.body.member4 && req.body.member3 !== req.body.member5 && 
+            (!req.body.member4 || req.body.member4 !== req.body.member5  )))
+        
 
-    const memberDiff = req.body.member1 !== req.body.member2 && req.body.member1 !== req.body.member3 && req.body.member1 !== req.body.member4 && 
-    req.body.member1 !== req.body.member5 && (!req.body.member2 || req.body.member2 !== req.body.member3 && req.body.member2 !== req.body.member4   && 
-        req.body.member2 !== req.body.member5 && (!req.body.member3 || req.body.member3 !== req.body.member4 && req.body.member3 !== req.body.member5 && 
-        (!req.body.member4 || req.body.member4 !== req.body.member5  )))
-    
+        const membre = await isAUser(req.body.member1) &&  (!req.body.member2 || await isAUser(req.body.member2)) && 
+            (!req.body.member3 || await isAUser(req.body.member3)) && (!req.body.member4 || await isAUser(req.body.member4)) &&
+            (!req.body.member5 || await isAUser(req.body.member5))
+        
+        const registered = await isRegistered1(req.body.member1) ||  (req.body.member2 && await isRegistered1(req.body.member2)) || 
+            (req.body.member3 && await isRegistered1(req.body.member3)) || (req.body.member4 && await isRegistered1(req.body.member4)) ||
+            (req.body.member5 && await isRegistered1(req.body.member5)) || await isRegistered2(req.body.member1) ||  (req.body.member2 && 
+            await isRegistered2(req.body.member2)) || (req.body.member3 && await isRegistered2(req.body.member3)) || (req.body.member4 && 
+            await isRegistered2(req.body.member4)) ||(req.body.member5 && await isRegistered2(req.body.member5))
+        
+        
+        const manager = await isManager(req.body.member1, res);
 
-    const membre = await isAUser(req.body.member1) &&  (!req.body.member2 || await isAUser(req.body.member2)) && 
-        (!req.body.member3 || await isAUser(req.body.member3)) && (!req.body.member4 || await isAUser(req.body.member4)) &&
-        (!req.body.member5 || await isAUser(req.body.member5))
-    
-    const registered = await isRegistered1(req.body.member1) ||  (req.body.member2 && await isRegistered1(req.body.member2)) || 
-        (req.body.member3 && await isRegistered1(req.body.member3)) || (req.body.member4 && await isRegistered1(req.body.member4)) ||
-        (req.body.member5 && await isRegistered1(req.body.member5)) || await isRegistered2(req.body.member1) ||  (req.body.member2 && 
-        await isRegistered2(req.body.member2)) || (req.body.member3 && await isRegistered2(req.body.member3)) || (req.body.member4 && 
-        await isRegistered2(req.body.member4)) ||(req.body.member5 && await isRegistered2(req.body.member5))
-    
-       
-    const manager = await isManager(req.body.member1, res);
-
-    if (!memberDiff) {
-        res.status(409);
+        if (!memberDiff) {
+            res.status(409);
+            res.json({
+                message: "Un membre ne peut pas être inscrit deux fois."
+            })
+        }
+        else if(! membre){
+            res.status(404);
+            res.json({
+                message: "Un des membres n'est pas inscrit."
+            })
+        }else if(registered){
+            res.status(409);
+            res.json({
+                message: "Un des membres est déjà inscrit à un autre projet."
+            })
+        } else if (!manager){
+            res.status(409);
+            res.json({
+                message: "Le membre 1 n'a pas le statut de manager."
+            })
+        }
+        else {
+            new_form.save((error, form) => {
+                if (error) {
+                    res.status(500);
+                    console.log(error);
+                    res.json({
+                        message: "Erreur serveur."
+                    })
+                } else {
+                    res.status(201);
+                    res.json(form)
+                }
+            })
+        }
+    }else {
+        res.status(400);
         res.json({
-            message: "Un membre ne peut pas être inscrit deux fois."
+            message: "Il faut au moins un membre dans l'équipe."
         })
     }
-    else if(! membre){
-        res.status(404);
-        res.json({
-            message: "Un des membres n'est pas inscrit."
-        })
-    }else if(registered){
-        res.status(409);
-        res.json({
-            message: "Un des membres est déjà inscrit à un autre projet."
-        })
-    } else if (!manager){
-        res.status(409);
-        res.json({
-            message: "Le membre 1 n'a pas le statut de manager."
-        })
-    }
-    else {
-        new_form.save((error, form) => {
-            if (error) {
-                res.status(500);
-                console.log(error);
-                res.json({
-                    message: "Erreur serveur."
-                })
-            } else {
-                res.status(201);
-                res.json(form)
-            }
-        })
-    }
+    
 
 }
 
