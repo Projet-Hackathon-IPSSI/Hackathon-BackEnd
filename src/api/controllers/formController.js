@@ -180,7 +180,7 @@ exports.update_a_form = async (req, res) => {
             message: "Un des membres n'est pas inscrit."
         }) 
         
-    }else if(manager){
+    }else if(! manager){
         res.status(400);
         res.json({
             message: "Le membre 1 n'a pas le statut de manager."
