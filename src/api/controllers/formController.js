@@ -11,7 +11,22 @@ exports.list_all_forms = (req, res) => {
             })
         } else {
             res.status(200);
-            res.json(forms)
+            console.log(forms[1])
+            forms.map(form => {
+                if(form["member2"] === ''){
+                    form["member2"] = undefined;
+                }
+                if(form["member3"] === ''){
+                    form["member3"] = undefined;
+                }
+                if(form["member4"] === ''){
+                    form["member4"] = undefined;
+                }
+                if(form["member5"] === ''){
+                    form["member5"] = undefined;
+                }
+            })
+            res.json(forms);
         }
     })
 }
@@ -117,7 +132,6 @@ exports.create_a_form = async (req, res) => {
 
 
 exports.get_a_form = (req, res) => {
-    console.log(req.params.form_id);
     Form.findById(req.params.form_id, (error, form) => {
         if (error) {
             res.status(500);
@@ -126,6 +140,18 @@ exports.get_a_form = (req, res) => {
                 message: "Erreur serveur."
             });
         } else if (form){
+            if(form["member2"] === ''){
+                form["member2"] = undefined;
+            }
+            if(form["member3"] === ''){
+                form["member3"] = undefined;
+            }
+            if(form["member4"] === ''){
+                form["member4"] = undefined;
+            }
+            if(form["member5"] === ''){
+                form["member5"] = undefined;
+            }
             res.status(200);
             res.json(form);
         } else {
@@ -216,19 +242,15 @@ exports.update_a_form = async (req, res) => {
             } else if (form){
                 if(req.body.member2 === ''){
                     form["member2"] = undefined;
-                    delete req.body.member2;
                 }
                 if(req.body.member3 === ''){
                     form["member3"] = undefined;
-                    delete req.body.member3;
                 }
-                if(req.body.member2 === ''){
-                    form["member3"] = undefined;
-                    delete req.body.member3;
+                if(req.body.member4 === ''){
+                    form["member4"] = undefined;
                 }
-                if(req.body.member2 === ''){
-                    form["member3"] = undefined;
-                    delete req.body.member3;
+                if(req.body.member5 === ''){
+                    form["member5"] = undefined;
                 }
                 res.status(200);
                 res.json(form);
