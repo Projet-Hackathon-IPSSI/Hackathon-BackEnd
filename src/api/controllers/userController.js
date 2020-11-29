@@ -62,6 +62,7 @@ exports.login_an_user = (req, res) => {
                     if (error) {
                         res.status(400);
                         console.log(error);
+                        console.log(user.password)
                         res.json({
                             message: "Mot de passe ou email erroné."
                         })
