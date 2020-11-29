@@ -16,6 +16,9 @@ services:
       - mongo
     networks:
       - my-network
+    env_file:
+      - .env
+
   mongo:
     container_name: project_api_mongo
     image: mongo
