@@ -11,7 +11,6 @@ exports.list_all_forms = (req, res) => {
             })
         } else {
             res.status(200);
-            console.log(forms[1])
             forms.map(form => {
                 if(form["member2"] === ''){
                     form["member2"] = undefined;
@@ -62,7 +61,6 @@ function isManager(email,res){
 }
 
 exports.create_a_form = async (req, res) => {
-//TODO verifié que les personnes sont inscrites qu'une fois
     let new_form = new Form(req.body);
     if(req.body.member1){
         const memberDiff = req.body.member1 !== req.body.member2 && req.body.member1 !== req.body.member3 && req.body.member1 !== req.body.member4 && 
@@ -156,7 +154,6 @@ exports.get_a_form = (req, res) => {
             res.json(form);
         } else {
             res.status(404);
-            console.log(error);
             res.json({
                 message: "Formulaire inexistant."
             });
@@ -256,7 +253,6 @@ exports.update_a_form = async (req, res) => {
                 res.json(form);
             } else {
                 res.status(400);
-                console.log(error);
                 res.json({
                     message: "Formulaire inexistant."
                 });
@@ -280,7 +276,6 @@ exports.delete_a_form = (req, res) => {
             res.json(form);
         } else {
             res.status(400);
-            console.log(error);
             res.json({
                 message: "Formulaire inexistant."
             });
